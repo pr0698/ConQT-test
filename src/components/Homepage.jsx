@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router-dom";
 import "../App.css";
 import axios from "axios";
+import { ItemSuppDetails } from "./ItemSuppDetails";
 
 export function Homepage() {
   const [isChecked, setIschecked] = useState(false);
@@ -16,7 +11,15 @@ export function Homepage() {
   const [date, setDate] = useState("USD");
   const [country, setCountry] = useState("USD");
   const [isFormValid, setIsFormValid] = useState(false);
-  const navigate = useNavigate();
+
+  const[supplierName, setSupplierName] = useState('');
+  const [supplierCountry,setSupplierCountry] = useState('');
+  const[state,setSate] = useState('');
+  const[city,setCity] = useState('');
+  const [email,setEmail] = useState('');
+  const [phoneNumber,setPhoneNumber] = useState('');
+  const [isSupplierFormValid,setSupplierFormValid] = useState(false);
+  const [supplierStatusMessage,setSupplierStatusMessage] = useState('');
 
   useEffect(() => {
     if (itemName && quantity && /^[0-9]+$/.test(quantity)) {
@@ -25,6 +28,16 @@ export function Homepage() {
       setIsFormValid(false);
     }
   }, [itemName, quantity, date]);
+
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(supplierName && supplierCountry && state && city && emailRegex.test(email) && phoneNumber){
+        setSupplierFormValid(true);
+    }else{
+        setSupplierFormValid(false);
+    }
+  },[supplierName,supplierCountry,state,city,email,phoneNumber]);
 
   const handleCheckboxChange = () => {
     setIschecked(!isChecked);
@@ -149,46 +162,8 @@ export function Homepage() {
           </form>
         )}
       </div>
+      <ItemSuppDetails/>
     </div>
   );
 }
 
-export function SubmittedDataPage() {
-  const navigate = useNavigate();
-  const location = window.location;
-
-  const formData = location.state || {
-    itemName: "",
-    quantity: "",
-    unitPrice: "",
-    date: "",
-    country: "",
-  };
-
-  return (
-    <div className="submitted-page">
-      <h1> Submitted Data</h1>
-      <table className="submitted-table">
-        <thread>
-          <tr>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Unit Price</th>
-            <th>Date</th>
-            <th>Country</th>
-          </tr>
-        </thread>
-        <tbody>
-            <tr>
-                <td>{formData.itemName}</td>
-                <td>{formData.quantity}</td>
-                <td>{formData.unitPrice}</td>
-                <td>{formData.date}</td>
-                <td>{formData.country}</td>
-            </tr>
-        </tbody>
-      </table>
-      <button onClick={() => navigate('/')}>Save and Exit</button>
-    </div>
-  );
-}
